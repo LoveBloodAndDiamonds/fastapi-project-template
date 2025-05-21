@@ -1,4 +1,23 @@
 services:
+  postgres:
+    image: postgres:15
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - PGDATA=/var/lib/postgresql/data
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      timeout: 3s
+      retries: 5
+      # On runtime
+      interval: 600s
+      # On start
+      start_period: 20s
+      start_interval: 2s
+
   app:
     build:
       context: .
@@ -7,10 +26,27 @@ services:
     volumes:
       - ./app:/app/app
       - ./logs:/app/logs
-    command: sh -c "uv run python3 -m app"
-    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "${APP_PORT}:8000"
+    command: >
+      sh -c "
+      uv run alembic upgrade head
+      &&
+      uv run uvicorn app.__main__:app
+      --host 0.0.0.0
+      --port 8000
+      --log-level info
+      --proxy-headers
+      --forwarded-allow-ips=*
+      "
     logging:
       driver: "json-file"
       options:
-        max-size: "5m"
+        max-size: "50m"
         max-file: "3"
+
+volumes:
+  postgres_data:

@@ -1,0 +1,186 @@
+{% extends "layout.html" %} {% block content %} {{ super() }}
+
+<style>
+    @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap");
+
+    .page-title {
+        display: none;
+    }
+
+    .metric-container {
+        display: flex;
+        flex-direction: column; /* Вертикальное расположение */
+        align-items: center; /* Центрирование по горизонтали */
+        gap: 20px;
+        margin: 30px auto;
+        padding: 0 20px;
+        max-width: 600px; /* Ограничиваем ширину контейнера */
+    }
+
+    .metric {
+        width: 100%; /* Занимает всю ширину контейнера */
+        padding: 25px;
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        font-family: "Inter", sans-serif;
+        color: #2d3436;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .metric:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .metric::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(90deg, #00c6fb 0%, #005bea 100%);
+    }
+
+    .metric h2 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 20px;
+        color: #1e272e;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .metric p {
+        margin: 12px 0;
+        font-size: 0.95rem;
+        color: #636e72;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .highlight {
+        font-weight: 500;
+        color: #2d3436;
+        background: rgba(0, 198, 251, 0.1);
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 0.9rem;
+    }
+
+    .metric-icon {
+        font-size: 1.2rem;
+        opacity: 0.8;
+    }
+
+    .progress-bar {
+        width: 100%;
+        height: 6px;
+        background: #e9ecef;
+        border-radius: 3px;
+        margin-top: 8px;
+        overflow: hidden;
+    }
+
+    .progress-value {
+        height: 100%;
+        background: linear-gradient(90deg, #00c6fb 0%, #005bea 100%);
+        border-radius: 3px;
+        transition: width 0.3s ease;
+    }
+
+    @keyframes pulse {
+        0% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0.7;
+        }
+        100% {
+            opacity: 1;
+        }
+    }
+
+    .updating {
+        animation: pulse 2s infinite;
+    }
+
+    /* Адаптивность для мобильных устройств */
+    @media (max-width: 640px) {
+        .metric-container {
+            padding: 0 10px;
+        }
+
+        .metric {
+            padding: 20px;
+        }
+    }
+</style>
+
+<link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+/>
+
+<div class="metric-container">
+    <!-- CPU -->
+    <div class="metric">
+        <h2><i class="fas fa-microchip metric-icon"></i> CPU Usage</h2>
+        <p>Current Load: <span class="highlight">{{ cpu_percent }}</span></p>
+        <div class="progress-bar">
+            <div
+                class="progress-value"
+                style="width: {{ cpu_percent.replace('%', '') }}%"
+            ></div>
+        </div>
+    </div>
+
+    <!-- Memory -->
+    <div class="metric">
+        <h2><i class="fas fa-memory metric-icon"></i> Memory Usage</h2>
+        <p>Total: <span class="highlight">{{ memory_total }}</span></p>
+        <p>Used: <span class="highlight">{{ memory_used }}</span></p>
+        <div class="progress-bar">
+            <div
+                class="progress-value"
+                style="width: {{ memory_percent.replace('%', '') }}%"
+            ></div>
+        </div>
+    </div>
+
+    <!-- Disk -->
+    <div class="metric">
+        <h2><i class="fas fa-hdd metric-icon"></i> Disk Usage</h2>
+        <p>Total: <span class="highlight">{{ disk_total }}</span></p>
+        <p>Used: <span class="highlight">{{ disk_used }}</span></p>
+        <div class="progress-bar">
+            <div
+                class="progress-value"
+                style="width: {{ disk_percent.replace('%', '') }}%"
+            ></div>
+        </div>
+    </div>
+
+    <!-- Uptime -->
+    <div class="metric">
+        <h2><i class="fas fa-clock metric-icon"></i> System Uptime</h2>
+        <p>Boot Time: <span class="highlight">{{ boot_time }}</span></p>
+    </div>
+</div>
+
+<script>
+    // Плавное обновление страницы
+    setInterval(function () {
+        document
+            .querySelectorAll(".metric")
+            .forEach((el) => el.classList.add("updating"));
+        setTimeout(() => window.location.reload(), 500);
+    }, 3000);
+</script>
+{% endblock %}

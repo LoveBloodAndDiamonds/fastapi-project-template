@@ -15,5 +15,8 @@ COPY uv.lock pyproject.toml /app/
 # Устанавилваем зависимости
 RUN uv sync
 
+# Копируем файл миграций
+COPY alembic.ini /app/alembic.ini
+
 # Копируем приложение
 COPY app /app/app
