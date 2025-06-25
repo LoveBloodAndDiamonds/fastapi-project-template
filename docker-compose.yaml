@@ -47,6 +47,7 @@ services:
       options:
         max-size: "50m"
         max-file: "3"
+    restart: always
 
 volumes:
   postgres_data:
