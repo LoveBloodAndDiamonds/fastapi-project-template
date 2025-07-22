@@ -1,5 +1,7 @@
 create-migrations:
-	docker compose run --rm app uv run alembic revision --autogenerate
+	@echo "Enter migration message: "; \
+	read MESSAGE; \
+	docker compose run --rm app uv run alembic revision --autogenerate -m "$$MESSAGE"
 
 migrate:
 	docker compose run --rm app uv run alembic upgrade head
