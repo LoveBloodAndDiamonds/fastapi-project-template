@@ -1,22 +1,22 @@
+"""Базовые модели SQLAlchemy."""
+
 import datetime
 from typing import Annotated
 
 from sqlalchemy import text
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
-# Аннтоация для поля created_at
+# Аннотация для поля created_at
 created_at = Annotated[
     datetime.datetime, mapped_column(server_default=text("TIMEZONE('utc', now())"))
 ]
 
 
 class Base(DeclarativeBase):
-    """
-    Base sqlalchemy model
-    """
+    """Базовая модель SQLAlchemy."""
 
     created_at: Mapped[created_at]
-    """Когда пользователь зарегистрировался"""
+    """Когда запись была создана."""
 
     # Starlette-admin representations
     # Docs: https://jowilf.github.io/starlette-admin/user-guide/configurations/modelview/

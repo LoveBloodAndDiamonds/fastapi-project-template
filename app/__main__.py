@@ -1,3 +1,5 @@
+"""Точка входа FastAPI-приложения."""
+
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI

@@ -1,4 +1,4 @@
-"""Repository file."""
+"""Абстрактный репозиторий для работы с моделями БД."""
 
 from collections.abc import Sequence
 from typing import Any, Generic, TypeVar
@@ -12,30 +12,30 @@ AbstractModel = TypeVar("AbstractModel", bound=Base)
 
 
 class Repository(Generic[AbstractModel]):
-    """Repository abstract class."""
+    """Базовый абстрактный репозиторий."""
 
     def __init__(self, type_model: type[AbstractModel], session: AsyncSession):
-        """Initialize abstract repository class.
+        """Инициализирует абстрактный репозиторий.
 
-        :param type_model: Which model will be used for operations
-        :param session: Session in which repository will work.
+        :param type_model: Модель, с которой выполняются операции.
+        :param session: Сессия, в рамках которой работает репозиторий.
         """
         self.type_model = type_model
         self.session = session
 
     async def get(self, ident: int | str) -> AbstractModel | None:
-        """Get an ONE model from the database with PK.
+        """Получает одну запись по первичному ключу.
 
-        :param ident: Key which need to find entry in database
-        :return:
+        :param ident: Значение ключа, по которому ищем запись.
+        :return: Найденная модель или None.
         """
         return await self.session.get(entity=self.type_model, ident=ident)
 
     async def get_by_where(self, whereclause) -> AbstractModel | None:
-        """Get an ONE model from the database with whereclause.
+        """Возвращает одну запись по условию.
 
-        :param whereclause: Clause by which entry will be found
-        :return: Model if only one model was found, else None.
+        :param whereclause: Условие, по которому выполняется поиск.
+        :return: Модель при единственном совпадении, иначе None.
         """
         statement = select(self.type_model).where(whereclause)
         result = await self.session.execute(statement)
@@ -45,16 +45,16 @@ class Repository(Generic[AbstractModel]):
     async def get_many(
         self, whereclause=None, limit: int = 999, order_by=None
     ) -> Sequence[AbstractModel]:
-        """Get many models from the database with whereclause.
+        """Получает несколько записей, удовлетворяющих условию.
 
-        :param whereclause: (Optional) Where clause for finding models
-        :param limit: (Optional) Limit count of results
-        :param order_by: (Optional) Order by clause.
+        :param whereclause: (опционально) условие фильтрации записей.
+        :param limit: (опционально) максимальное количество результатов.
+        :param order_by: (опционально) выражение для сортировки.
 
-        Example:
+        Пример:
         >> Repository.get_many(Model.id == 1, limit=10, order_by=Model.id)
 
-        :return: List of founded models
+        :return: Список найденных моделей.
         """
         statement = select(self.type_model)
         if whereclause is not None:
@@ -69,15 +69,15 @@ class Repository(Generic[AbstractModel]):
     async def get_all(
         self, whereclause: Any | None = None, order_by: Any | None = None
     ) -> Sequence[AbstractModel]:
-        """Get all models from the database with optional whereclause.
+        """Возвращает все записи с дополнительными условиями.
 
-        :param whereclause: (Optional) Where clause for finding models
-        :param order_by: (Optional) Order by clause.
+        :param whereclause: (опционально) условие фильтрации.
+        :param order_by: (опционально) выражение для сортировки.
 
-        Example:
+        Пример:
         >> Repository.get_all(Model.is_active == True, order_by=Model.id)
 
-        :return: List of all found models
+        :return: Список всех найденных моделей.
         """
         statement = select(self.type_model)
         if whereclause is not None:
@@ -88,18 +88,18 @@ class Repository(Generic[AbstractModel]):
         return (await self.session.scalars(statement)).all()
 
     async def delete(self, whereclause) -> None:
-        """Delete model from the database.
+        """Удаляет записи по заданному условию.
 
-        :param whereclause: (Optional) Which statement
-        :return: Nothing
+        :param whereclause: Условие удаления.
+        :return: None.
         """
         statement = delete(self.type_model).where(whereclause)
         await self.session.execute(statement)
 
     async def delete_all(self) -> None:
-        """Delete all records from the model in the database.
+        """Удаляет все записи модели из базы данных.
 
-        :return: Nothing
+        :return: None.
         """
         statement = delete(self.type_model)
         await self.session.execute(statement)

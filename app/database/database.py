@@ -1,4 +1,4 @@
-"""Database class with all-in-one features."""
+"""Класс, инкапсулирующий работу с базой данных."""
 
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
@@ -16,41 +16,37 @@ from .models import Base
 
 
 class Database:
-    """Database class.
-
-    Is the highest abstraction level of database and
-    can be used in the handlers or any other bot-side functions.
-    """
+    """Высокоуровневая обертка над взаимодействием с базой данных."""
 
     engine: AsyncEngine = create_async_engine(url=config.db.build_connection_str())
-    """ Pre-inited database engine """
+    """Предварительно инициализированный движок базы данных."""
 
     sessionmaker = async_sessionmaker(bind=engine)
-    """ Sessionmaker """
+    """Фабрика асинхронных сессий."""
 
     def __init__(self, session: AsyncSession) -> None:
-        """Initialize Database class.
+        """Создает экземпляр класса Database.
 
-        :param session: AsyncSession to use
+        :param session: Асинхронная сессия, используемая для операций.
         """
         self.session: AsyncSession = session
-        """ Current database session """
+        """Текущая сессия базы данных."""
 
     @classmethod
     @asynccontextmanager
     async def session_context(cls) -> AsyncGenerator["Database", None]:
-        """Async session generator"""
+        """Генератор асинхронных сессий."""
         async with cls.sessionmaker() as session:
             yield cls(session)  # Возвращаем объект сессии
 
     async def commit(self) -> None:
-        """Make commit using AsyncSession."""
+        """Фиксирует изменения в базе данных."""
         await self.session.commit()
 
     async def refresh(self, instance: type[Base]) -> None:
-        """Expire and refresh the attributes on the given instance"""
+        """Принудительно обновляет атрибуты переданного экземпляра модели."""
         await self.session.refresh(instance)
 
     async def flush(self) -> None:
-        """Make flush using AsyncSession."""
+        """Сбрасывает изменения в базу без коммита."""
         await self.session.flush()

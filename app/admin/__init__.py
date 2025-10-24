@@ -1,3 +1,5 @@
+"""Настройка админ-панели и регистрация представлений."""
+
 __all__ = [
     "register_admin_routes",
 ]
@@ -16,7 +18,7 @@ from .view import LogsCustomView, MetrCustomView
 
 
 def register_admin_routes(app: FastAPI) -> None:
-    """Function register admin views to fastApi appliaction."""
+    """Регистрирует представления админ-панели в FastAPI-приложении."""
 
     # Init starlette-admin instance
     admin = Admin(

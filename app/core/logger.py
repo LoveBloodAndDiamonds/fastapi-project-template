@@ -1,6 +1,4 @@
-"""
-Configuration file.
-"""
+"""Настройка логирования приложения."""
 
 __all__ = [
     "logger",
@@ -18,7 +16,7 @@ if TYPE_CHECKING:
 
 
 class LoggerFactory:
-    """Factory for creating and caching loggers."""
+    """Фабрика для создания и кеширования логгеров."""
 
     # Remove default loguru handlers
     logger.remove()
@@ -44,14 +42,14 @@ class LoggerFactory:
         enqueue: bool = False,
     ) -> "Logger":
         """
-        Returns an existing logger or creates a new one.
+        Возвращает существующий логгер или создает новый.
 
-        :param name: Logger name (used for file storage).
-        :param base_dir: Base directory for log files.
-        :param stdout_level: Logging level for console output.
-        :param file_levels: Levels for file output. Default: ["ERROR", "INFO", "DEBUG"]
-        :param enqueue: Enables async logging (recommended for high-load apps).
-        :return: Logger instance.
+        :param name: Имя логгера (используется для имен файлов).
+        :param base_dir: Базовая директория для лог-файлов.
+        :param stdout_level: Уровень логирования для вывода в консоль.
+        :param file_levels: Уровни логирования для файлового вывода (по умолчанию ["ERROR", "INFO", "DEBUG"]).
+        :param enqueue: Включает асинхронную запись логов (рекомендуется для высоких нагрузок).
+        :return: Экземпляр логгера.
         """
         if name in cls._loggers:
             return cls._loggers[name]  # Return cached logger

@@ -18,19 +18,19 @@ from app.schemas import EnvironmentType
 
 @dataclass(frozen=True)
 class _DatabaseConfig:
-    """Database connection variables."""
+    """Параметры подключения к базе данных."""
 
     name: str | None = getenv("POSTGRES_DB")
     user: str | None = getenv("POSTGRES_USER")
     passwd: str | None = getenv("POSTGRES_PASSWORD", None)
-    port: int = int(getenv("POSTGRES_PORT", 5432))
+    port: int = int(getenv("POSTGRES_PORT", "5432"))
     host: str = getenv("POSTGRES_HOST", "db")
 
     driver: str = "asyncpg"
     database_system: str = "postgresql"
 
     def build_connection_str(self) -> str:
-        """This function build a connection string."""
+        """Формирует строку подключения к базе данных."""
         return URL.create(
             drivername=f"{self.database_system}+{self.driver}",
             username=self.user,
@@ -43,39 +43,39 @@ class _DatabaseConfig:
 
 @dataclass(frozen=True)
 class _AdminConfig:
-    """Admin panel configuration."""
+    """Настройки админ-панели."""
 
     title: str = "Admin Panel"
-    """App title"""
+    """Название приложения."""
 
     logo_url: str = "https://images.icon-icons.com/3256/PNG/512/admin_lock_padlock_icon_205893.png"
-    """Logo url"""
+    """Ссылка на логотип."""
 
     login: str = getenv("ADMIN_LOGIN", "admin")
-    """Admin login"""
+    """Логин администратора."""
 
     password: str = getenv("ADMIN_PASSWORD", "admin")
-    """Admin password"""
+    """Пароль администратора."""
 
 
 @dataclass(frozen=True)
 class Configuration:
-    """All in one configuration's class."""
+    """Единая точка доступа к настройкам приложения."""
 
     db: _DatabaseConfig = _DatabaseConfig()
-    """Database config"""
+    """Конфигурация базы данных."""
 
     admin: _AdminConfig = _AdminConfig()
-    """Admin panel config"""
+    """Конфигурация админ-панели."""
 
     try:
         environment: EnvironmentType = EnvironmentType(os.getenv("ENVIRONMENT", "production"))
-        """Current project environment"""
+        """Текущее окружение проекта."""
     except KeyError as err:
         raise ValueError(f"Invalid environment: {os.getenv('ENVIRONMENT')}") from err
 
     cypher_key: str = getenv("CYPHER_KEY", uuid.UUID(int=uuid.getnode()).hex[-12:])
-    """Cypher key"""
+    """Ключ для шифрования."""
 
 
 config: Configuration = Configuration()

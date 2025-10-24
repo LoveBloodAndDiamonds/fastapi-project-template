@@ -1,3 +1,5 @@
+"""Провайдер авторизации для админ-панели."""
+
 from starlette.requests import Request
 from starlette.responses import Response
 from starlette_admin.auth import AdminConfig, AdminUser, AuthProvider
@@ -8,10 +10,10 @@ from app.core import config
 
 class AdminAuthProvider(AuthProvider):
     """
-    This is only for demo purpose, it's not a better
-    way to save and validate user credentials
+    Этот провайдер предназначен только для демонстрации и не отражает
+    наилучшие практики хранения и проверки учетных данных.
 
-    Docs:
+    Документация:
     https://jowilf.github.io/starlette-admin/user-guide/authentication/
     """
 
@@ -24,7 +26,7 @@ class AdminAuthProvider(AuthProvider):
         response: Response,
     ) -> Response:
         if username == config.admin.login and password == config.admin.password:
-            """Save `username` in session"""
+            """Сохраняет имя пользователя в сессии."""
             request.session.update({"username": username})
             return response
 
@@ -33,8 +35,8 @@ class AdminAuthProvider(AuthProvider):
     async def is_authenticated(self, request) -> bool:
         if request.session.get("username", None) == config.admin.login:
             """
-            Save current `user` object in the request state. Can be used later
-            to restrict access to connected user.
+            Сохраняет текущего пользователя в состоянии запроса, чтобы позже
+            можно было ограничивать доступ.
             """
             request.state.user = config.admin.login
             return True
