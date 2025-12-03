@@ -1,7 +1,7 @@
 """Абстрактный репозиторий для работы с моделями БД."""
 
 from collections.abc import Sequence
-from typing import Any, Generic, TypeVar
+from typing import Any, TypeVar
 
 from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -11,7 +11,7 @@ from ..models import Base
 AbstractModel = TypeVar("AbstractModel", bound=Base)
 
 
-class Repository(Generic[AbstractModel]):
+class Repository[AbstractModel]:
     """Базовый абстрактный репозиторий."""
 
     def __init__(self, type_model: type[AbstractModel], session: AsyncSession):
