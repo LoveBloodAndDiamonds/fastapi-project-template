@@ -10,7 +10,7 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 
-from app.core import config
+from app.config import config
 
 from .models import Base
 
@@ -34,7 +34,7 @@ class Database:
 
     @classmethod
     @asynccontextmanager
-    async def session_context(cls) -> AsyncGenerator["Database", None]:
+    async def session_context(cls) -> AsyncGenerator["Database"]:
         """Генератор асинхронных сессий."""
         async with cls.sessionmaker() as session:
             yield cls(session)  # Возвращаем объект сессии

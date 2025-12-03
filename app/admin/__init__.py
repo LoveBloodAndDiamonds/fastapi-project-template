@@ -10,7 +10,7 @@ from starlette.middleware.sessions import SessionMiddleware
 from starlette_admin import CustomView
 from starlette_admin.contrib.sqla import Admin
 
-from app.core import config
+from app.config import config
 from app.database import Database
 
 from .auth import AdminAuthProvider

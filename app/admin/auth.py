@@ -5,7 +5,7 @@ from starlette.responses import Response
 from starlette_admin.auth import AdminConfig, AdminUser, AuthProvider
 from starlette_admin.exceptions import LoginFailed
 
-from app.core import config
+from app.config import config
 
 
 class AdminAuthProvider(AuthProvider):

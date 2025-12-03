@@ -19,7 +19,7 @@ from starlette_admin import (
 )
 from starlette_admin.contrib.sqla import ModelView
 
-from app.core import logger
+from app.config import logger
 
 
 class _CustomModelView(ModelView):

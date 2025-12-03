@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from .admin import register_admin_routes
-from .core import config, logger
+from .config import config, logger
 from .schemas import EnvironmentType
 
 
